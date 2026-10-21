@@ -1,0 +1,405 @@
+@import 'tailwindcss';
+
+@source '../js/**/*.{vue,js}';
+
+/* ── Tokens ──────────────────────────────────────────────────────────────
+   Semantic colors live in CSS variables so light/dark swap in one place.
+   Teal = action. Orange ("signal") = needs a human: review queue, AI activity. */
+:root {
+    --canvas: #f7f6f2;
+    --surface: #ffffff;
+    --sunken: #efeee8;
+    --ink: #141b1a;
+    --ink-2: #47524f;
+    --ink-3: #626d6a;
+    --line: #e4e3dc;
+    --line-strong: #cfcec5;
+    --brand: #0f766e;
+    --brand-hover: #115e59;
+    --brand-soft: #e1f1ee;
+    --brand-ink: #ffffff;
+    --signal: #c2410c;
+    --signal-soft: #fdede3;
+    --danger: #b42318;
+    --danger-soft: #fdecea;
+    --st-backlog: #8a938f;
+    --st-todo: #5468e8;
+    --st-progress: #0f766e;
+    --st-review: #c2410c;
+    --st-done: #3a8a4a;
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+        --canvas: #0d1211;
+        --surface: #141b1a;
+        --sunken: #0a0f0e;
+        --ink: #e9efed;
+        --ink-2: #aab6b2;
+        --ink-3: #8a9692;
+        --line: #222c2a;
+        --line-strong: #33423f;
+        --brand: #2dd4bf;
+        --brand-hover: #5eead4;
+        --brand-soft: #0f2a27;
+        --brand-ink: #04211e;
+        --signal: #fb923c;
+        --signal-soft: #2e1a0e;
+        --danger: #f87171;
+        --danger-soft: #2d1414;
+        --st-backlog: #6f7a76;
+        --st-todo: #8b98ff;
+        --st-progress: #2dd4bf;
+        --st-review: #fb923c;
+        --st-done: #6cc27d;
+        color-scheme: dark;
+    }
+}
+
+:root[data-theme='dark'] {
+    --canvas: #0d1211;
+    --surface: #141b1a;
+    --sunken: #0a0f0e;
+    --ink: #e9efed;
+    --ink-2: #aab6b2;
+    --ink-3: #8a9692;
+    --line: #222c2a;
+    --line-strong: #33423f;
+    --brand: #2dd4bf;
+    --brand-hover: #5eead4;
+    --brand-soft: #0f2a27;
+    --brand-ink: #04211e;
+    --signal: #fb923c;
+    --signal-soft: #2e1a0e;
+    --danger: #f87171;
+    --danger-soft: #2d1414;
+    --st-backlog: #6f7a76;
+    --st-todo: #8b98ff;
+    --st-progress: #2dd4bf;
+    --st-review: #fb923c;
+    --st-done: #6cc27d;
+    color-scheme: dark;
+}
+
+@theme inline {
+    --color-canvas: var(--canvas);
+    --color-surface: var(--surface);
+    --color-sunken: var(--sunken);
+    --color-ink: var(--ink);
+    --color-ink-2: var(--ink-2);
+    --color-ink-3: var(--ink-3);
+    --color-line: var(--line);
+    --color-line-strong: var(--line-strong);
+    --color-brand: var(--brand);
+    --color-brand-hover: var(--brand-hover);
+    --color-brand-soft: var(--brand-soft);
+    --color-brand-ink: var(--brand-ink);
+    --color-signal: var(--signal);
+    --color-signal-soft: var(--signal-soft);
+    --color-danger: var(--danger);
+    --color-danger-soft: var(--danger-soft);
+    --color-st-backlog: var(--st-backlog);
+    --color-st-todo: var(--st-todo);
+    --color-st-progress: var(--st-progress);
+    --color-st-review: var(--st-review);
+    --color-st-done: var(--st-done);
+
+    --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+    --ease-snap: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-enter: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-canvas text-ink font-sans antialiased;
+        font-size: 15px;
+        line-height: 1.55;
+        letter-spacing: -0.006em;
+        font-feature-settings: 'ss01', 'cv11';
+    }
+
+    h1,
+    h2,
+    h3 {
+        @apply font-display text-ink;
+        letter-spacing: -0.025em;
+        line-height: 1.1;
+        text-wrap: balance;
+    }
+
+    ::selection {
+        background: var(--brand-soft);
+        color: var(--ink);
+    }
+
+    :focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 2px;
+        border-radius: 6px;
+    }
+
+    button,
+    [role='button'],
+    a,
+    select,
+    summary {
+        cursor: pointer;
+    }
+
+    button:disabled {
+        cursor: not-allowed;
+    }
+}
+
+/* ── Components ───────────────────────────────────────────────────────── */
+@layer components {
+    .btn {
+        @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold whitespace-nowrap select-none;
+        transition:
+            background-color 160ms var(--ease-snap),
+            color 160ms var(--ease-snap),
+            transform 160ms var(--ease-snap),
+            opacity 160ms var(--ease-snap);
+    }
+    .btn:active:not(:disabled) {
+        transform: scale(0.97);
+    }
+    .btn:disabled {
+        opacity: 0.55;
+    }
+    .btn-primary {
+        @apply bg-brand text-brand-ink hover:bg-brand-hover;
+    }
+    .btn-quiet {
+        @apply text-ink-2 hover:bg-sunken hover:text-ink;
+    }
+    .btn-outline {
+        @apply text-ink ring-1 ring-line-strong ring-inset hover:bg-sunken;
+    }
+    .btn-danger {
+        @apply text-danger hover:bg-danger-soft;
+    }
+    .btn-sm {
+        @apply h-8 px-3 text-[13px];
+    }
+
+    .field {
+        @apply block w-full rounded-lg bg-surface px-3 py-2.5 text-[15px] text-ink ring-1 ring-line-strong ring-inset placeholder:text-ink-3;
+        transition: box-shadow 160ms var(--ease-snap);
+    }
+    .field:focus {
+        @apply outline-none ring-2 ring-brand;
+    }
+    .field[aria-invalid='true'] {
+        @apply ring-2 ring-danger;
+    }
+
+    .label {
+        @apply mb-1.5 block text-[13px] font-semibold text-ink-2;
+    }
+
+    .eyebrow {
+        @apply text-[11px] font-semibold tracking-[0.14em] text-ink-3 uppercase;
+    }
+
+    .kbd {
+        @apply inline-flex h-5 min-w-5 items-center justify-center rounded border border-line-strong px-1 font-mono text-[11px] text-ink-3;
+    }
+
+    .task-key {
+        @apply font-mono text-[12px] font-medium tracking-tight text-ink-3;
+    }
+
+    /* Rendered markdown from humans and agents */
+    .prose-relay {
+        @apply text-[15px] leading-relaxed text-ink;
+    }
+    .prose-relay > * + * {
+        margin-top: 0.7em;
+    }
+    .prose-relay h1,
+    .prose-relay h2,
+    .prose-relay h3 {
+        @apply font-display text-base font-bold;
+    }
+    .prose-relay ul {
+        @apply list-disc pl-5;
+    }
+    .prose-relay ol {
+        @apply list-decimal pl-5;
+    }
+    .prose-relay a {
+        @apply text-brand underline underline-offset-2;
+    }
+    .prose-relay code {
+        @apply rounded bg-sunken px-1 py-0.5 font-mono text-[13px];
+    }
+    .prose-relay pre {
+        @apply overflow-x-auto rounded-lg bg-sunken p-3 font-mono text-[13px];
+    }
+    .prose-relay pre code {
+        @apply bg-transparent p-0;
+    }
+    .prose-relay blockquote {
+        @apply border-l-2 border-line-strong pl-3 text-ink-2;
+    }
+    .prose-relay input[type='checkbox'] {
+        @apply mr-1.5 align-middle accent-[var(--brand)];
+    }
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────── */
+.page-enter-active {
+    transition:
+        opacity 280ms var(--ease-enter),
+        transform 280ms var(--ease-enter);
+}
+.page-leave-active {
+    transition: opacity 120ms ease-out;
+}
+.page-enter-from {
+    opacity: 0;
+    transform: translateY(8px);
+}
+.page-leave-to {
+    opacity: 0;
+}
+
+.drawer-enter-active {
+    transition: transform 380ms var(--ease-enter);
+}
+.drawer-leave-active {
+    transition: transform 220ms var(--ease-snap);
+}
+.drawer-enter-from,
+.drawer-leave-to {
+    transform: translateX(100%);
+}
+
+.scrim-enter-active,
+.scrim-leave-active {
+    transition: opacity 240ms var(--ease-snap);
+}
+.scrim-enter-from,
+.scrim-leave-to {
+    opacity: 0;
+}
+
+.pop-enter-active {
+    transition:
+        opacity 220ms var(--ease-enter),
+        transform 260ms var(--ease-enter);
+}
+.pop-leave-active {
+    transition:
+        opacity 140ms ease-out,
+        transform 140ms ease-out;
+}
+.pop-enter-from,
+.pop-leave-to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+}
+
+.list-move,
+.list-enter-active {
+    transition:
+        opacity 300ms var(--ease-enter),
+        transform 360ms var(--ease-snap);
+}
+.list-leave-active {
+    transition: opacity 160ms ease-out;
+    position: absolute;
+    width: 100%;
+}
+.list-enter-from,
+.list-leave-to {
+    opacity: 0;
+    transform: translateY(6px);
+}
+
+.rise {
+    animation: rise 520ms var(--ease-enter) both;
+    animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+@keyframes pulse-dot {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* Homepage scroll reveal (only armed once home.js runs) */
+.reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition:
+        opacity 700ms var(--ease-enter),
+        transform 700ms var(--ease-enter);
+    transition-delay: var(--d, 0ms);
+}
+.reveal-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+.faq summary::-webkit-details-marker {
+    display: none;
+}
+
+/* ── Arabic / RTL ─────────────────────────────────────────────
+   Arabic is cursive: any letter-spacing breaks the joins, and tight
+   leading clips the tall ascenders and descenders. */
+[dir='rtl'] body {
+    font-family: 'IBM Plex Sans Arabic', var(--font-sans);
+    letter-spacing: 0;
+    line-height: 1.75;
+}
+[dir='rtl'] :is(h1, h2, h3, .font-display, .eyebrow) {
+    font-family: 'Noto Kufi Arabic', var(--font-display);
+    letter-spacing: 0 !important;
+}
+[dir='rtl'] :is(h1, h2) {
+    line-height: 1.35 !important;
+}
+[dir='rtl'] .hero-title {
+    font-size: clamp(38px, 5.4vw, 70px);
+}
+[dir='rtl'] :is(.wordmark, code, .task-key, [dir='ltr']) {
+    font-family: var(--font-display);
+}
+[dir='rtl'] :is(code, .task-key) {
+    font-family: var(--font-mono);
+}
+[dir='rtl'] .wordmark {
+    letter-spacing: -0.05em !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 1ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 1ms !important;
+    }
+}
