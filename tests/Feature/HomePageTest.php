@@ -17,7 +17,7 @@ class HomePageTest extends TestCase
             ->assertSee('lang="en" dir="ltr"', false)
             ->assertSee('Your assistant already knows what’s next.')
             ->assertSee('hreflang="ar"', false)
-            ->assertSee('info@tanami.ly');
+            ->assertSee('mohamed@ashaibi.com');
 
         $this->get('/en')->assertOk()->assertSee('Your assistant already knows what’s next.');
     }
@@ -29,7 +29,7 @@ class HomePageTest extends TestCase
             ->assertSee('lang="ar" dir="rtl"', false)
             ->assertSee('مساعدك الذكي يعرف الخطوة التالية.')
             ->assertSee('noto-kufi-arabic', false)
-            ->assertSee('info@tanami.ly');
+            ->assertSee('mohamed@ashaibi.com');
     }
 
     public function test_signed_in_users_get_the_app_at_root(): void

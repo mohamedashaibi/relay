@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'contact_email' => env('RELAY_CONTACT_EMAIL', 'info@tanami.ly'),
+    'contact_email' => env('RELAY_CONTACT_EMAIL', 'mohamed@ashaibi.com'),
 
     'attachments' => [
         // Any configured filesystem disk; "local" is private (storage/app/private). Use "s3" in production if you prefer.

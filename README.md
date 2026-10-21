@@ -1,6 +1,6 @@
 # Relay
 
-Contact: info@tanami.ly · [MIT License](LICENSE)
+Contact: mohamed@ashaibi.com · [MIT License](LICENSE)
 
 Built by [Mohamed Ashaibi](https://ashaibi.com).
 
