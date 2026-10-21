@@ -40,16 +40,17 @@ async function save() {
 }
 
 // Members
-const invite = ref({ email: '', role: 'member' });
+const invite = ref({ email: '', name: '', role: 'member' });
 const inviteError = ref('');
 async function addMember() {
     inviteError.value = '';
     try {
-        await api.post(`/projects/${key.value}/members`, invite.value);
+        const { data } = await api.post(`/projects/${key.value}/members`, { ...invite.value, name: invite.value.name.trim() || null });
+        const added = data.data.find((m) => m.email === invite.value.email.trim().toLowerCase());
         forgetMembers(key.value);
-        invite.value = { email: '', role: 'member' };
+        invite.value = { email: '', name: '', role: 'member' };
         await load();
-        toast('Member added', 'success');
+        toast(added?.pending ? `Invite sent to ${added.email}` : 'Member added', 'success');
     } catch (e) {
         const p = problem(e);
         inviteError.value = p.fields.email || p.message;
@@ -60,6 +61,15 @@ async function changeRole(member, role) {
         await api.post(`/projects/${key.value}/members`, { email: member.email, role });
         forgetMembers(key.value);
         await load();
+    } catch (e) {
+        toast(problem(e).message, 'error');
+    }
+}
+// Adding an invited person again re-sends their invite (and voids the old link).
+async function resendInvite(member) {
+    try {
+        await api.post(`/projects/${key.value}/members`, { email: member.email, role: member.role });
+        toast(`New invite sent to ${member.email}`, 'success');
     } catch (e) {
         toast(problem(e).message, 'error');
     }
@@ -143,29 +153,39 @@ async function destroy() {
         <!-- Members -->
         <section class="mt-16" aria-labelledby="members-h">
             <h2 id="members-h" class="text-xl font-bold">Members <span class="font-sans text-base font-normal text-ink-3">{{ project.members.length }}</span></h2>
-            <p class="mt-1 text-[14px] text-ink-2">Members can see and edit every task here. AI assistants act with the permissions of the person who connected them.</p>
+            <p class="mt-1 text-[14px] text-ink-2">Members can see and edit every task here. AI assistants act with the permissions of the person who connected them. New people get an email invite and can be assigned work right away.</p>
 
-            <form v-if="canManage" class="mt-6 flex flex-wrap items-start gap-2" @submit.prevent="addMember">
+            <form v-if="canManage" class="mt-6 flex flex-wrap items-end gap-2" @submit.prevent="addMember">
                 <div class="min-w-56 flex-1">
-                    <label for="invite-email" class="sr-only">Email</label>
+                    <label for="invite-email" class="label">Email</label>
                     <input id="invite-email" v-model="invite.email" type="email" class="field" placeholder="teammate@company.com" required :aria-invalid="!!inviteError" aria-describedby="invite-error" />
-                    <p v-if="inviteError" id="invite-error" class="mt-1.5 text-[13px] text-danger">{{ inviteError }}</p>
                 </div>
-                <label for="invite-role" class="sr-only">Role</label>
-                <select id="invite-role" v-model="invite.role" class="field w-auto">
-                    <option value="member">Member</option>
-                    <option value="admin">Admin</option>
-                </select>
-                <button class="btn btn-primary">Add</button>
+                <div class="min-w-44 flex-1">
+                    <label for="invite-name" class="label">Name <span class="font-normal text-ink-3">(if they’re new)</span></label>
+                    <input id="invite-name" v-model="invite.name" type="text" class="field" maxlength="80" autocomplete="off" placeholder="Nadia Salem" />
+                </div>
+                <div>
+                    <label for="invite-role" class="label">Role</label>
+                    <select id="invite-role" v-model="invite.role" class="field w-auto">
+                        <option value="member">Member</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary h-11">Add or invite</button>
+                <p v-if="inviteError" id="invite-error" class="basis-full text-[13px] text-danger" role="alert">{{ inviteError }}</p>
             </form>
 
             <ul class="mt-6 divide-y divide-line border-y border-line">
                 <li v-for="m in project.members" :key="m.id" class="flex flex-wrap items-center gap-3 py-3.5">
                     <Avatar :person="m" :size="32" />
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-[14px] font-semibold">{{ m.name }} <span v-if="m.id === session.user.id" class="font-normal text-ink-3">(you)</span></p>
+                        <p class="truncate text-[14px] font-semibold">
+                            {{ m.name }} <span v-if="m.id === session.user.id" class="font-normal text-ink-3">(you)</span>
+                            <span v-if="m.pending" class="ml-1 rounded bg-sunken px-1.5 py-0.5 text-[12px] font-medium text-ink-2">Invited</span>
+                        </p>
                         <p class="truncate text-[13px] text-ink-3">{{ m.email }}</p>
                     </div>
+                    <button v-if="m.pending && canManage" class="btn btn-quiet btn-sm" @click="resendInvite(m)">Resend invite</button>
                     <span v-if="m.role === 'owner' || !canManage" class="text-[13px] font-medium text-ink-2 capitalize">{{ m.role }}</span>
                     <template v-else>
                         <label :for="`role-${m.id}`" class="sr-only">Role for {{ m.name }}</label>

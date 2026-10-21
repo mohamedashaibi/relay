@@ -16,7 +16,7 @@ class ProjectMemberController extends Controller
     public function store(AddMemberRequest $request, string $project, AddProjectMemberUseCase $add): JsonResponse
     {
         $data = $request->validated();
-        $members = $add->execute($this->actor($request), $project, $data['email'], ProjectRole::from($data['role']));
+        $members = $add->execute($this->actor($request), $project, $data['email'], ProjectRole::from($data['role']), $data['name'] ?? null);
 
         return response()->json(['data' => array_map(fn (MemberView $m) => $m->toArray(), $members)], 201);
     }

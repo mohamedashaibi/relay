@@ -3,7 +3,7 @@ import { session } from './lib/session';
 
 const routes = [
     { path: '/login', component: () => import('./pages/Login.vue'), meta: { guest: true, title: 'Sign in' } },
-    { path: '/register', component: () => import('./pages/Register.vue'), meta: { guest: true, title: 'Create account' } },
+    { path: '/invite/:token', component: () => import('./pages/AcceptInvite.vue'), meta: { guest: true, title: 'Accept invite' } },
     { path: '/forgot-password', component: () => import('./pages/ForgotPassword.vue'), meta: { guest: true, title: 'Forgot password' } },
     { path: '/reset-password/:token', component: () => import('./pages/ResetPassword.vue'), meta: { guest: true, title: 'Reset password' } },
     {

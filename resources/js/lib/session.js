@@ -11,8 +11,8 @@ export async function login(payload) {
     return data;
 }
 
-export async function register(payload) {
-    const { data } = await api.post('/auth/register', payload);
+export async function acceptInvite(payload) {
+    const { data } = await api.post('/auth/accept-invite', payload);
     session.user = data.user;
     return data;
 }

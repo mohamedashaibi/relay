@@ -62,9 +62,6 @@ async function submit() {
             <button class="btn btn-primary h-11 w-full text-[15px]" :disabled="busy">{{ busy ? 'Signing in…' : 'Sign in' }}</button>
         </form>
 
-        <p class="mt-8 text-[14px] text-ink-2">
-            New to Relay?
-            <RouterLink :to="{ path: '/register', query: route.query }" class="font-semibold text-brand hover:underline">Create an account</RouterLink>
-        </p>
+        <p class="mt-8 text-[14px] text-ink-2">New to Relay? Accounts are by invite: ask a project owner or admin to add your email.</p>
     </AuthLayout>
 </template>

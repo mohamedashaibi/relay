@@ -7,6 +7,7 @@ use App\Domain\Users\UserRepository;
 use App\Domain\Users\UserSummary;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 final class EloquentUserRepository implements UserRepository
 {
@@ -20,15 +21,24 @@ final class EloquentUserRepository implements UserRepository
         return $this->map(User::where('email', mb_strtolower(trim($email)))->first());
     }
 
-    public function emailTaken(string $email): bool
+    public function createInvited(string $name, string $email): UserSummary
     {
-        return User::where('email', $email)->exists();
+        // Random unknown password: nobody can sign in until the invite link sets a real one.
+        $user = new User(['name' => $name, 'email' => $email, 'password' => Str::random(64)]);
+        $user->invite_pending = true;
+        $user->save();
+
+        return $this->map($user);
     }
 
-    public function create(string $name, string $email, string $plainPassword): UserSummary
+    public function activate(int $id, string $name, string $plainPassword): void
     {
-        // The model's "hashed" cast runs the configured hasher (bcrypt, 12 rounds).
-        return $this->map(User::create(['name' => $name, 'email' => $email, 'password' => $plainPassword]));
+        $user = User::findOrFail($id);
+        $user->name = $name;
+        $user->password = $plainPassword;
+        $user->invite_pending = false;
+        $user->email_verified_at ??= now();
+        $user->save();
     }
 
     public function rename(int $id, string $name): void
@@ -45,6 +55,7 @@ final class EloquentUserRepository implements UserRepository
     {
         $user = User::findOrFail($id);
         $user->password = $plainPassword;
+        $user->invite_pending = false; // A reset link proves the email is theirs, same as an invite.
         $user->save();
     }
 
@@ -68,6 +79,6 @@ final class EloquentUserRepository implements UserRepository
 
     private function map(?User $user): ?UserSummary
     {
-        return $user ? new UserSummary($user->id, $user->name, $user->email) : null;
+        return $user ? new UserSummary($user->id, $user->name, $user->email, $user->invite_pending) : null;
     }
 }

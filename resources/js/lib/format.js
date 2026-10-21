@@ -15,6 +15,9 @@ export const PRIORITIES = [
 
 export const SWATCHES = ['#0F766E', '#C2410C', '#4338CA', '#B91C1C', '#0369A1', '#7E22CE', '#15803D', '#A16207'];
 
+/** Picker option text: "Nadia Salem — nadia@example.com (invited)". */
+export const memberLabel = (m, meId) => `${m.name} — ${m.email}${m.id === meId ? ' (you)' : m.pending ? ' (invited)' : ''}`;
+
 export const statusMeta =(v) => STATUSES.find((s) => s.value === v) ?? STATUSES[1];
 export const priorityMeta = (v) => PRIORITIES.find((p) => p.value === v) ?? PRIORITIES[2];
 

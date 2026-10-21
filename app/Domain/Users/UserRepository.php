@@ -8,10 +8,11 @@ interface UserRepository
 
     public function findByEmail(string $email): ?UserSummary;
 
-    public function emailTaken(string $email): bool;
+    /** Persists an account that can't sign in until the invite is accepted. */
+    public function createInvited(string $name, string $email): UserSummary;
 
-    /** Persists a new user; the implementation is responsible for hashing the password. */
-    public function create(string $name, string $email, string $plainPassword): UserSummary;
+    /** Accepting an invite: the person picks their own name and password. */
+    public function activate(int $id, string $name, string $plainPassword): void;
 
     public function rename(int $id, string $name): void;
 

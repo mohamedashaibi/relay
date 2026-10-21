@@ -1,7 +1,7 @@
 <script setup>
 import { computed, nextTick, ref, watch } from 'vue';
 import { api, problem } from '../lib/api';
-import { ago, due, PRIORITIES, STATUSES } from '../lib/format';
+import { ago, due, memberLabel, PRIORITIES, STATUSES } from '../lib/format';
 import { renderMarkdown } from '../lib/markdown';
 import { session } from '../lib/session';
 import { projectMembers, toast, touch } from '../lib/store';
@@ -223,7 +223,7 @@ const canManageProject = computed(() => ['owner', 'admin'].includes(members.valu
                         <span :class="task.assignee ? 'text-ink' : 'text-ink-3'">{{ task.assignee?.name ?? 'Unassigned' }}</span>
                         <template #options>
                             <option value="">Unassigned</option>
-                            <option v-for="m in members" :key="m.id" :value="m.id">{{ m.name }}{{ m.id === session.user?.id ? ' (you)' : '' }}</option>
+                            <option v-for="m in members" :key="m.id" :value="m.id">{{ memberLabel(m, session.user?.id) }}</option>
                         </template>
                     </FieldSelect>
                 </dd>
@@ -235,7 +235,7 @@ const canManageProject = computed(() => ['owner', 'admin'].includes(members.valu
                         <span :class="task.reviewer ? 'text-ink' : 'text-ink-3'">{{ task.reviewer?.name ?? 'Anyone on the project' }}</span>
                         <template #options>
                             <option value="">Anyone on the project</option>
-                            <option v-for="m in members" :key="m.id" :value="m.id">{{ m.name }}{{ m.id === session.user?.id ? ' (you)' : '' }}</option>
+                            <option v-for="m in members" :key="m.id" :value="m.id">{{ memberLabel(m, session.user?.id) }}</option>
                         </template>
                     </FieldSelect>
                 </dd>
@@ -301,7 +301,7 @@ const canManageProject = computed(() => ['owner', 'admin'].includes(members.valu
                                 <label for="review-reviewer" class="label">Reviewer</label>
                                 <select id="review-reviewer" v-model="reviewerId" class="field">
                                     <option :value="null">Anyone on the project</option>
-                                    <option v-for="m in otherMembers" :key="m.id" :value="m.id">{{ m.name }}</option>
+                                    <option v-for="m in otherMembers" :key="m.id" :value="m.id">{{ memberLabel(m) }}</option>
                                 </select>
                             </div>
                             <button type="button" class="btn btn-quiet" @click="reviewForm = false">Cancel</button>

@@ -20,10 +20,12 @@ class TaskWorkflowTest extends TestCase
         $this->actingAs($owner)->postJson("/api/projects/{$key}/members", ['email' => $member->email, 'role' => $role])->assertCreated();
     }
 
-    public function test_register_then_fetch_current_user(): void
+    public function test_login_then_fetch_current_user(): void
     {
-        $this->postJson('/api/auth/register', ['name' => 'Ada', 'email' => 'Ada@Example.com', 'password' => 'correct-horse-9'])
-            ->assertCreated()
+        User::factory()->create(['name' => 'Ada', 'email' => 'ada@example.com', 'password' => 'correct-horse-9']);
+
+        $this->postJson('/api/auth/login', ['email' => 'Ada@Example.com', 'password' => 'correct-horse-9'])
+            ->assertOk()
             ->assertJsonPath('user.email', 'ada@example.com');
 
         $this->getJson('/api/auth/me')->assertOk()->assertJsonPath('user.name', 'Ada');

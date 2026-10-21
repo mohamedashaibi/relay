@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { api, problem } from '../lib/api';
-import { PRIORITIES, STATUSES } from '../lib/format';
+import { memberLabel, PRIORITIES, STATUSES } from '../lib/format';
 import { session } from '../lib/session';
 import { projectMembers, store, toast, touch } from '../lib/store';
 import Modal from './Modal.vue';
@@ -100,7 +100,7 @@ async function submit() {
                     <label for="nt-assignee" class="label">Assignee</label>
                     <select id="nt-assignee" v-model="form.assignee_id" class="field" :aria-invalid="!!errors.assignee_id">
                         <option value="">Unassigned</option>
-                        <option v-for="m in members" :key="m.id" :value="m.id">{{ m.name }}</option>
+                        <option v-for="m in members" :key="m.id" :value="m.id">{{ memberLabel(m, session.user?.id) }}</option>
                     </select>
                 </div>
                 <div>

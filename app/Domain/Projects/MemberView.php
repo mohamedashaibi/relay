@@ -9,10 +9,11 @@ final readonly class MemberView
         public string $name,
         public string $email,
         public ProjectRole $role,
+        public bool $pending = false,
     ) {}
 
     public function toArray(): array
     {
-        return ['id' => $this->userId, 'name' => $this->name, 'email' => $this->email, 'role' => $this->role->value];
+        return ['id' => $this->userId, 'name' => $this->name, 'email' => $this->email, 'role' => $this->role->value, 'pending' => $this->pending];
     }
 }

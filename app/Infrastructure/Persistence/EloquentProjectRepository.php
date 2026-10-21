@@ -86,11 +86,11 @@ final class EloquentProjectRepository implements ProjectRepository
 
     public function members(int $projectId): array
     {
-        return ProjectMember::with('user:id,name,email')
+        return ProjectMember::with('user:id,name,email,invite_pending')
             ->where('project_id', $projectId)
             ->get()
             ->sortBy(fn (ProjectMember $m) => [array_search($m->role, ['owner', 'admin', 'member']), $m->user->name])
-            ->map(fn (ProjectMember $m) => new MemberView($m->user_id, $m->user->name, $m->user->email, ProjectRole::from($m->role)))
+            ->map(fn (ProjectMember $m) => new MemberView($m->user_id, $m->user->name, $m->user->email, ProjectRole::from($m->role), $m->user->invite_pending))
             ->values()
             ->all();
     }

@@ -52,8 +52,7 @@
                 @if ($signedIn)
                     <a href="{{ url('/') }}" class="btn btn-primary btn-sm">{{ __('home.nav.open_app') }}</a>
                 @else
-                    <a href="{{ url('/login') }}" class="btn btn-quiet btn-sm hidden sm:inline-flex">{{ __('home.nav.sign_in') }}</a>
-                    <a href="{{ url('/register') }}" class="btn btn-primary btn-sm">{{ __('home.nav.start') }}</a>
+                    <a href="{{ url('/login') }}" class="btn btn-primary btn-sm">{{ __('home.nav.sign_in') }}</a>
                 @endif
             </div>
         </nav>
@@ -71,7 +70,7 @@
                     {{ __('home.hero.lead') }}
                 </p>
                 <div class="rise mt-9 flex flex-wrap items-center gap-3" style="--i:3">
-                    <a href="{{ url($signedIn ? '/' : '/register') }}" class="btn btn-primary h-12 px-6 text-[15px]">
+                    <a href="{{ url($signedIn ? '/' : '/login') }}" class="btn btn-primary h-12 px-6 text-[15px]">
                         {{ $signedIn ? __('home.nav.open_app') : __('home.hero.primary') }}
                         <svg class="rtl:-scale-x-100" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
                     </a>
@@ -218,7 +217,7 @@
             <div class="mx-auto max-w-[1200px] px-5 py-24 sm:px-8 lg:py-32" data-reveal>
                 <h2 class="max-w-3xl font-display text-[clamp(36px,5.6vw,72px)] leading-[0.98] font-extrabold tracking-[-0.05em] text-[#f3f7f5]">{{ __('home.cta.title') }}</h2>
                 <p class="mt-6 max-w-xl text-[18px] leading-relaxed font-light text-[#aab6b2]">{{ __('home.cta.lead') }}</p>
-                <a href="{{ url($signedIn ? '/' : '/register') }}" class="btn mt-10 h-12 bg-[#2dd4bf] px-6 text-[15px] text-[#04211e] hover:bg-[#5eead4]">
+                <a href="{{ url($signedIn ? '/' : '/login') }}" class="btn mt-10 h-12 bg-[#2dd4bf] px-6 text-[15px] text-[#04211e] hover:bg-[#5eead4]">
                     {{ $signedIn ? __('home.nav.open_app') : __('home.cta.button') }}
                     <svg class="rtl:-scale-x-100" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
                 </a>

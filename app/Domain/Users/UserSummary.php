@@ -8,6 +8,7 @@ final readonly class UserSummary
         public int $id,
         public string $name,
         public string $email,
+        public bool $pending = false,
     ) {}
 
     public function toArray(): array

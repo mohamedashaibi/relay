@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Users\AcceptInvitationUseCase;
 use App\Application\Users\CompletePasswordResetUseCase;
-use App\Application\Users\RegisterUserUseCase;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AcceptInviteRequest;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -21,15 +21,27 @@ use Illuminate\Validation\ValidationException;
 /** Session authentication for the SPA. AI clients authenticate with OAuth / personal tokens instead. */
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request, RegisterUserUseCase $register): JsonResponse
+    /** Relay is invite-only: this is how accounts become usable. Signs the person in on success. */
+    public function acceptInvite(AcceptInviteRequest $request, AcceptInvitationUseCase $accept): JsonResponse
     {
         $data = $request->validated();
-        $user = $register->execute($data['name'], $data['email'], $data['password']);
+        $accepted = null;
 
-        Auth::loginUsingId($user->id);
+        $status = Password::broker('invites')->reset(
+            ['email' => mb_strtolower(trim($data['email'])), 'password' => $data['password'], 'token' => $data['token']],
+            function (User $user, string $password) use ($accept, $data, &$accepted) {
+                $accepted = $accept->execute($user->id, $data['name'], $password);
+            },
+        );
+
+        if ($status !== Password::PASSWORD_RESET) {
+            throw ValidationException::withMessages(['email' => 'This invite link is invalid, expired or already used. Ask whoever invited you to send a new one.']);
+        }
+
+        Auth::loginUsingId($accepted->id);
         $request->session()->regenerate();
 
-        return response()->json(['user' => $user->toArray(), 'redirect' => $this->intended($request)], 201);
+        return response()->json(['user' => $accepted->toArray()], 201);
     }
 
     public function login(LoginRequest $request): JsonResponse

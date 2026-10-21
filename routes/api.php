@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 // AI clients never hit these routes — they use the MCP endpoint in routes/ai.php.
 
 Route::middleware(['guest', 'throttle:auth'])->group(function () {
-    Route::post('auth/register', [AuthController::class, 'register']);
+    Route::post('auth/accept-invite', [AuthController::class, 'acceptInvite']);
     Route::post('auth/login', [AuthController::class, 'login']);
 });
 
