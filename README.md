@@ -1,6 +1,6 @@
 # Relay
 
-**https://relay.tanami.ly** · contact: info@tanami.ly · [MIT License](LICENSE)
+Contact: info@tanami.ly · [MIT License](LICENSE)
 
 Built by [Mohamed Ashaibi](https://ashaibi.com).
 
@@ -23,7 +23,7 @@ php artisan serve               # http://127.0.0.1:8000
 
 Guests visiting `/` get the public homepage; signed-in users get their dashboard. Language versions: `/en` and `/ar` (Arabic is right-to-left). The text lives in `lang/en/home.php` and `lang/ar/home.php`, and a test checks the two files have the same keys. The contact email comes from `RELAY_CONTACT_EMAIL`.
 
-For production, `.env.example` is set up for `https://relay.tanami.ly` (`APP_ENV=production`, `APP_DEBUG=false`). Copy it to `.env` on the server and fill in the database, mail, and `APP_KEY` values.
+For production, `.env.example` sets `APP_ENV=production` and `APP_DEBUG=false`. Copy it to `.env` on the server, set `APP_URL` to your domain (with `https://`), and fill in the database, mail, and `APP_KEY` values.
 
 ## Email
 
